@@ -59,10 +59,6 @@ public class AnagramDictionary {
     }
 
     public boolean isGoodWord(String word, String base) {
-//        word = word.toLowerCase();
-//        base = base.toLowerCase();
-//        if (word.equals(base))
-//            return false;
         return getAnagramsWithOneMoreLetter(base).contains(word);
     }
 
@@ -101,12 +97,8 @@ public class AnagramDictionary {
 
         for(char c = 'a'; c <= 'z'; c++) {
             String sorted = sortLetters(word + c);
-            ArrayList<String> ana = lettersToWord.get(sorted);
-            if (ana != null) {
-                for (String str : ana) {
-                    result.add(str);
-                }
-            }
+            if (lettersToWord.containsKey(sorted))
+                result.addAll(lettersToWord.get(sorted));
         }
 
         return result;
