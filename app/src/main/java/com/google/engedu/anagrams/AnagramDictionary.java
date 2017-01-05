@@ -49,24 +49,29 @@ public class AnagramDictionary {
         while((line = in.readLine()) != null) {
             String word = line.trim();
             dictionary.add(word);
+
+            String sorted = sortLetters(word);
+            if (!lettersToWord.containsKey(sorted)) {
+                lettersToWord.put(sorted, new ArrayList<String>());
+            }
+            lettersToWord.get(sorted).add(word);
         }
     }
 
     public boolean isGoodWord(String word, String base) {
-        word = word.toUpperCase();
-        base = base.toUpperCase();
-        if (word.equals(base))
-            return false;
-        return isAnagram(word, base);
+//        word = word.toLowerCase();
+//        base = base.toLowerCase();
+//        if (word.equals(base))
+//            return false;
+        return getAnagramsWithOneMoreLetter(base).contains(word);
     }
 
     public List<String> getAnagrams(String targetWord) {
-        ArrayList<String> result = new ArrayList<String>();
-        for (String str : dictionary) {
-            if (isGoodWord(str, targetWord))
-                result.add(str);
-        }
-        return result;
+        targetWord = targetWord.toLowerCase();
+        String sorted = sortLetters(targetWord);
+
+        return lettersToWord.containsKey(sorted) ? lettersToWord.get(sorted)
+                : new ArrayList<String>();
     }
 
     @VisibleForTesting
@@ -84,21 +89,27 @@ public class AnagramDictionary {
         return true;
     }
 
-//    @VisibleForTesting
-//    static String sortLetters(String input) {
-//        char[] chars = input.toCharArray();
-//        //
-//        // Your code here
-//        //
-//        return "";
-//    }
+    @VisibleForTesting
+    static String sortLetters(String input) {
+        char[] chars = input.toCharArray();
+        Arrays.sort(chars);
+        return new String(chars);
+    }
 
     public List<String> getAnagramsWithOneMoreLetter(String word) {
-//        ArrayList<String> result = new ArrayList<String>();
-        //
-        // Your code here
-        //
-        return getAnagrams(word);
+        ArrayList<String> result = new ArrayList<>();
+
+        for(char c = 'a'; c <= 'z'; c++) {
+            String sorted = sortLetters(word + c);
+            ArrayList<String> ana = lettersToWord.get(sorted);
+            if (ana != null) {
+                for (String str : ana) {
+                    result.add(str);
+                }
+            }
+        }
+
+        return result;
     }
 
     public String pickGoodStarterWord() {
